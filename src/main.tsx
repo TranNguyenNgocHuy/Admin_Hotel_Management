@@ -7,3 +7,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>
 )
+
+/*
+Pwd-Supabase: 4W7GgY67gHc61sMQ
+*/

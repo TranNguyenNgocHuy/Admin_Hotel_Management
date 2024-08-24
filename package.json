@@ -13,8 +13,11 @@
     "prettier:fix": "prettier --write \"src/**/(*.tsx|*.ts|*.css|*.scss)\""
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
+    "react-router-dom": "^6.26.1",
     "styled-components": "^6.1.12"
   },
   "devDependencies": {
