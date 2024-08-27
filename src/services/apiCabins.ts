@@ -1,4 +1,6 @@
-import supabase from './supabase'
+import supabase, { supabaseUrl } from './supabase'
+
+import { NewCabinData } from '../features/cabins/InterfaceCabin'
 
 export async function getCabins() {
   const { data, error } = await supabase.from('cabins').select('*')
@@ -6,6 +8,65 @@ export async function getCabins() {
   if (error) {
     console.error(error)
     throw new Error('Cabins could not be loaded')
+  }
+
+  return data
+}
+
+export async function createCabin(newCabin: NewCabinData) {
+  if (!(newCabin.image instanceof File) || 'id' in newCabin) return
+
+  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll('/', '')
+  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabins-images/${imageName}`
+
+  // 1. Create cabin
+  const { data, error } = await supabase
+    .from('cabins')
+    .insert([{ ...newCabin, image: imagePath }])
+    .select()
+
+  if (error) {
+    console.error(error)
+    throw new Error('Cabin could not be created')
+  }
+
+  // 2. Upload image
+  const { error: storageError } = await supabase.storage.from('cabins-images').upload(imageName, newCabin.image)
+
+  // 3. Delete cabin IF there was error in image uploading
+  if (storageError) {
+    await supabase.from('cabins').delete().eq('id', data[0].id)
+    console.error(storageError)
+    throw new Error('Cabin image upload fail')
+  }
+  return data
+}
+
+export async function editCabin(newCabin: NewCabinData) {
+  if (!newCabin.id) return
+  console.log(newCabin)
+
+  const dataToUpdate = { ...newCabin }
+
+  if (newCabin.image instanceof File) {
+    const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll('/', '')
+    const imagePath = `${supabaseUrl}/storage/v1/object/public/cabins-images/${imageName}`
+    dataToUpdate.image = imagePath
+
+    // Upload image
+    const { error: storageError } = await supabase.storage.from('cabins-images').upload(imageName, newCabin.image)
+    if (storageError) {
+      throw new Error('Cabin image upload fail')
+    }
+  }
+
+  delete dataToUpdate.id
+  console.log(dataToUpdate)
+  const { data, error } = await supabase.from('cabins').update(dataToUpdate).eq('id', newCabin.id).select()
+
+  if (error) {
+    console.error(error)
+    throw new Error('Cabin could not be update')
   }
 
   return data
