@@ -7,7 +7,7 @@ import FileInput from '../../ui/FileInput'
 import Textarea from '../../ui/Textarea'
 import FormRow from '../../ui/FormRow'
 
-import { FormValuesNewCabin } from './InterfaceCabin'
+import { FormValuesNewCabin } from './interfaceCabin'
 import { useCreateCabin } from './useCreateCabin'
 import { useEditCabin } from './useEditCabin'
 
@@ -27,7 +27,6 @@ interface CabinToEditProps {
 function CreateCabinForm({ cabinToEdit }: CabinToEditProps) {
   const { id: editId } = cabinToEdit || {}
   const isEdit = Boolean(editId)
-
   const { register, handleSubmit, reset, getValues, formState } = useForm<FormValuesNewCabin>({
     defaultValues: isEdit ? cabinToEdit : {}
   })

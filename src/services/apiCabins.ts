@@ -1,6 +1,5 @@
 import supabase, { supabaseUrl } from './supabase'
-
-import { NewCabinData } from '../features/cabins/InterfaceCabin'
+import { NewCabinData } from '../features/cabins/interfaceCabin'
 
 export async function getCabins() {
   const { data, error } = await supabase.from('cabins').select('*')
@@ -14,6 +13,20 @@ export async function getCabins() {
 }
 
 export async function createCabin(newCabin: NewCabinData) {
+  // Duplicate Cabin
+  if (typeof newCabin.image === 'string' && !('id' in newCabin)) {
+    const { data, error } = await supabase
+      .from('cabins')
+      .insert([{ ...newCabin }])
+      .select()
+
+    if (error) {
+      console.error(error)
+      throw new Error('Cabin could not be created')
+    }
+    return data
+  }
+
   if (!(newCabin.image instanceof File) || 'id' in newCabin) return
 
   const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll('/', '')

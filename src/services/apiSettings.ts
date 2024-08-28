@@ -1,8 +1,8 @@
+import { FormValuesSetting } from '../features/settings/interfaceSettings'
 import supabase from './supabase'
 
 export async function getSettings() {
   const { data, error } = await supabase.from('settings').select('*').single()
-
   if (error) {
     console.error(error)
     throw new Error('Settings could not be loaded')
@@ -11,7 +11,7 @@ export async function getSettings() {
 }
 
 // We expect a newSetting object that looks like {setting: newValue}
-export async function updateSetting(newSetting) {
+export async function updateSetting(newSetting: FormValuesSetting) {
   const { data, error } = await supabase
     .from('settings')
     .update(newSetting)
