@@ -7,7 +7,6 @@ const StyledTable = styled.div`
   font-size: 1.4rem;
   background-color: var(--color-grey-0);
   border-radius: 7px;
-  overflow: hidden;
 `
 interface CommonRowProps {
   columns: string
@@ -54,13 +53,6 @@ const Footer = styled.footer`
     display: none;
   }
 `
-
-// const Empty = styled.p`
-//   font-size: 1.6rem;
-//   font-weight: 500;
-//   text-align: center;
-//   margin: 2.4rem;
-// `
 
 interface TableContextProps {
   columns: string

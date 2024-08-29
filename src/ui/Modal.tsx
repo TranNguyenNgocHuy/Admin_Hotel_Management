@@ -97,7 +97,7 @@ function Window({ children, name }: WindowProps) {
   if (!context) throw new Error('Window must be used within a Modal')
   const { openName, close } = context
 
-  const ref = useOutsideClick(close)
+  const ref = useOutsideClick<HTMLDivElement>(close)
 
   if (name !== openName) return null
 

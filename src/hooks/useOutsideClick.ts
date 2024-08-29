@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 
-type Hanler = () => void
+type Handler = () => void
 
-export function useOutsideClick(handler: Hanler, listenCapturing: boolean = true) {
-  const ref = useRef<HTMLDivElement | null>(null)
+export function useOutsideClick<T extends HTMLElement>(handler: Handler, listenCapturing: boolean = true) {
+  const ref = useRef<T | null>(null)
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
