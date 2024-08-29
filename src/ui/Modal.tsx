@@ -1,4 +1,8 @@
+import { cloneElement, createContext, useContext, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { HiXMark } from 'react-icons/hi2'
 import styled from 'styled-components'
+import { useOutsideClick } from '../hooks/useOutsideClick'
 
 const StyledModal = styled.div`
   position: fixed;
@@ -48,3 +52,88 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `
+
+interface ModalContextProps {
+  openName: string
+  close: () => void
+  open: (name: string) => void
+}
+
+const ModalContext = createContext<ModalContextProps | undefined>(undefined)
+
+interface ModalProps {
+  children: React.ReactNode
+}
+
+interface OpenProps {
+  children: React.ReactElement
+  opens: string
+}
+
+interface WindowProps {
+  children: React.ReactElement
+  name: string
+}
+
+function Modal({ children }: ModalProps) {
+  const [openName, setOpenName] = useState<string>('')
+  const close = () => setOpenName('')
+  const open = (name: string) => setOpenName(name)
+
+  return <ModalContext.Provider value={{ openName, close, open }}>{children}</ModalContext.Provider>
+}
+
+function Open({ children, opens: opensWindowName }: OpenProps) {
+  const context = useContext(ModalContext)
+  if (!context) throw new Error('Open must be used within a Modal')
+
+  const { open } = context
+
+  return cloneElement(children, { onClick: () => open(opensWindowName) })
+}
+
+function Window({ children, name }: WindowProps) {
+  const context = useContext(ModalContext)
+  if (!context) throw new Error('Window must be used within a Modal')
+  const { openName, close } = context
+
+  const ref = useOutsideClick(close)
+
+  if (name !== openName) return null
+
+  return createPortal(
+    <Overlay>
+      <StyledModal ref={ref}>
+        <Button onClick={close}>
+          <HiXMark></HiXMark>
+        </Button>
+        <div>{cloneElement(children, { handleCloseModal: close })}</div>
+      </StyledModal>
+    </Overlay>,
+    document.body
+  )
+}
+
+Modal.Open = Open
+Modal.Window = Window
+
+export default Modal
+
+// interface Props {
+//   children: React.ReactElement
+//   handleCloseModal: () => void
+// }
+
+// function Modal({ children, handleCloseModal }: Props) {
+//   return createPortal(
+//     <Overlay>
+//       <StyledModal>
+//         <Button onClick={handleCloseModal}>
+//           <HiXMark></HiXMark>
+//         </Button>
+//         <div>{children}</div>
+//       </StyledModal>
+//     </Overlay>,
+//     document.body
+//   )
+// }

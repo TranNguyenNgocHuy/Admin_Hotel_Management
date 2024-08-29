@@ -22,9 +22,10 @@ interface CabinToEditProps {
     description: string
     image: string
   }
+  handleCloseModal?: () => void
 }
 
-function CreateCabinForm({ cabinToEdit }: CabinToEditProps) {
+function CreateCabinForm({ cabinToEdit, handleCloseModal }: CabinToEditProps) {
   const { id: editId } = cabinToEdit || {}
   const isEdit = Boolean(editId)
   const { register, handleSubmit, reset, getValues, formState } = useForm<FormValuesNewCabin>({
@@ -41,9 +42,25 @@ function CreateCabinForm({ cabinToEdit }: CabinToEditProps) {
     const image = typeof data.image === 'string' ? data.image : data.image[0]
 
     if (isEdit) {
-      editCabin({ ...data, image: image }, { onSuccess: () => reset() })
+      editCabin(
+        { ...data, image: image },
+        {
+          onSuccess: () => {
+            reset()
+            handleCloseModal?.()
+          }
+        }
+      )
     } else {
-      createCabin({ ...data, image: image }, { onSuccess: () => reset() })
+      createCabin(
+        { ...data, image: image },
+        {
+          onSuccess: () => {
+            reset()
+            handleCloseModal?.()
+          }
+        }
+      )
     }
   }
 
@@ -52,7 +69,7 @@ function CreateCabinForm({ cabinToEdit }: CabinToEditProps) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSubmit, onError)} type={handleCloseModal ? 'modal' : 'regular'}>
       {isEdit && <input type='hidden' {...register('id')} />}
       <FormRow label='Cabin name' error={errors?.name?.message}>
         <Input
@@ -121,7 +138,7 @@ function CreateCabinForm({ cabinToEdit }: CabinToEditProps) {
 
       <FormRow>
         <>
-          <Button variation='secondary' type='reset' disabled={isWorking}>
+          <Button variation='secondary' type='reset' disabled={isWorking} onClick={() => handleCloseModal?.()}>
             Cancel
           </Button>
           <Button disabled={isWorking}>{isEdit ? 'Edit cabin' : 'Creat new cabin'}</Button>
