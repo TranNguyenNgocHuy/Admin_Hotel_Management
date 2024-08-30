@@ -1,5 +1,35 @@
 import { getToday } from '../utils/helpers'
 import supabase from './supabase'
+import { BookingData } from '../features/bookings/interfaceBooking'
+
+interface GetBookings {
+  filter: {
+    field: string
+    value: string
+  } | null
+  sortBy: {
+    field: string
+    direction: string
+  }
+}
+export async function getBookings({ filter, sortBy }: GetBookings): Promise<BookingData[]> {
+  let query = supabase.from('bookings').select('*, cabins(name) , guests(fullName, email)')
+
+  // FILTER
+  if (filter) query = query.eq(filter.field, filter.value)
+
+  // SORT
+  if (sortBy) query = query.order(sortBy.field, { ascending: sortBy.direction === 'asc' })
+
+  const { data, error } = await query
+
+  if (error) {
+    console.error(error)
+    throw new Error('Booking could not be loaded')
+  }
+
+  return data as BookingData[]
+}
 
 export async function getBooking(id) {
   const { data, error } = await supabase.from('bookings').select('*, cabins(*), guests(*)').eq('id', id).single()

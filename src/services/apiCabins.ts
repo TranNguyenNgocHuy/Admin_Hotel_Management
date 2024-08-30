@@ -1,7 +1,7 @@
 import supabase, { supabaseUrl } from './supabase'
-import { NewCabinData } from '../features/cabins/interfaceCabin'
+import { CabinData, NewCabinData } from '../features/cabins/interfaceCabin'
 
-export async function getCabins() {
+export async function getCabins(): Promise<CabinData[]> {
   const { data, error } = await supabase.from('cabins').select('*')
 
   if (error) {
@@ -9,7 +9,7 @@ export async function getCabins() {
     throw new Error('Cabins could not be loaded')
   }
 
-  return data
+  return data as CabinData[]
 }
 
 export async function createCabin(newCabin: NewCabinData) {
