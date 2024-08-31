@@ -5,7 +5,7 @@ import { CabinData } from './interfaceCabin'
 export function useGetCabins() {
   const {
     isLoading,
-    data: cabins,
+    data: cabins = [],
     error
   } = useQuery<CabinData[]>({
     queryKey: ['cabins'],
