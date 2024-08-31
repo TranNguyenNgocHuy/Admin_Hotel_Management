@@ -1,3 +1,5 @@
+import { HiChevronLeft, HiChevronRight } from 'react-icons/hi2'
+import { useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const StyledPagination = styled.div`
@@ -54,3 +56,53 @@ const PaginationButton = styled.button`
     color: var(--color-brand-50);
   }
 `
+
+interface PaginationProps {
+  dataLength: number
+}
+
+const PAGE_SIZE = 10
+
+function Pagination({ dataLength }: PaginationProps) {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const currentPage = !searchParams.get('page') ? 1 : Number(searchParams.get('page'))
+
+  const totalPage = Math.ceil(dataLength / PAGE_SIZE)
+
+  function nextPage() {
+    const next = currentPage === totalPage ? currentPage : currentPage + 1
+    searchParams.set('page', next.toString())
+    setSearchParams(searchParams)
+  }
+
+  function previousPage() {
+    const previous = currentPage === 1 ? currentPage : currentPage - 1
+    searchParams.set('page', previous.toString())
+    setSearchParams(searchParams)
+  }
+
+  if (totalPage <= 1) return null
+
+  return (
+    <StyledPagination>
+      <P>
+        Showing <span>{(currentPage - 1) * PAGE_SIZE + 1}</span> to{' '}
+        <span>{currentPage === totalPage ? dataLength : currentPage * PAGE_SIZE}</span> of <span>{dataLength}</span>{' '}
+        results
+      </P>
+
+      <Buttons>
+        <PaginationButton onClick={previousPage} disabled={currentPage === 1}>
+          <HiChevronLeft />
+          <span>Previous</span>
+        </PaginationButton>
+        <PaginationButton onClick={nextPage} disabled={currentPage === totalPage}>
+          <span>Next</span>
+          <HiChevronRight />
+        </PaginationButton>
+      </Buttons>
+    </StyledPagination>
+  )
+}
+
+export default Pagination

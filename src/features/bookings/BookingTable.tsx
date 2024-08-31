@@ -5,6 +5,7 @@ import Empty from '../../ui/Empty'
 import Spinner from '../../ui/Spinner'
 
 import { useGetBookings } from './useGetBookings'
+import Pagination from '../../ui/Pagination'
 
 function BookingTable() {
   const { isLoading, bookings } = useGetBookings()
@@ -31,6 +32,10 @@ function BookingTable() {
             bookings?.map((booking) => <BookingRow booking={booking} key={booking.id} />)
           )}
         </Table.Body>
+
+        <Table.Footer>
+          <Pagination dataLength={11} />
+        </Table.Footer>
       </Table>
     </Menus>
   )
