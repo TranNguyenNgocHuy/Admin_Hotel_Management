@@ -11,9 +11,9 @@ import DataItem from '../../ui/DataItem'
 import { Flag } from '../../ui/Flag'
 
 import { formatDistanceFromNow, formatCurrency } from '../../utils/helpers'
+import { BookingFullData } from './interfaceBooking'
 
 const StyledBookingDataBox = styled.section`
-  /* Box */
   background-color: var(--color-grey-0);
   border: 1px solid var(--color-grey-100);
   border-radius: var(--border-radius-md);
@@ -68,7 +68,11 @@ const Guest = styled.div`
   }
 `
 
-const Price = styled.div`
+interface PriceProps {
+  $isPaid: boolean
+}
+
+const Price = styled.div<PriceProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -76,8 +80,8 @@ const Price = styled.div`
   border-radius: var(--border-radius-sm);
   margin-top: 2.4rem;
 
-  background-color: ${(props) => (props.isPaid ? 'var(--color-green-100)' : 'var(--color-yellow-100)')};
-  color: ${(props) => (props.isPaid ? 'var(--color-green-700)' : 'var(--color-yellow-700)')};
+  background-color: ${(props) => (props.$isPaid ? 'var(--color-green-100)' : 'var(--color-yellow-100)')};
+  color: ${(props) => (props.$isPaid ? 'var(--color-green-700)' : 'var(--color-yellow-700)')};
 
   & p:last-child {
     text-transform: uppercase;
@@ -98,11 +102,14 @@ const Footer = styled.footer`
   color: var(--color-grey-500);
   text-align: right;
 `
+interface BookingDataBoxProps {
+  booking: BookingFullData
+}
 
 // A purely presentational component
-function BookingDataBox({ booking }) {
+function BookingDataBox({ booking }: BookingDataBoxProps) {
   const {
-    created_at,
+    createdAt,
     startDate,
     endDate,
     numNights,
@@ -156,7 +163,7 @@ function BookingDataBox({ booking }) {
           {hasBreakfast ? 'Yes' : 'No'}
         </DataItem>
 
-        <Price isPaid={isPaid}>
+        <Price $isPaid={isPaid}>
           <DataItem icon={<HiOutlineCurrencyDollar />} label={`Total price`}>
             {formatCurrency(totalPrice)}
 
@@ -168,7 +175,7 @@ function BookingDataBox({ booking }) {
       </Section>
 
       <Footer>
-        <p>Booked {format(new Date(created_at), 'EEE, MMM dd yyyy, p')}</p>
+        <p>Booked {format(new Date(createdAt), 'EEE, MMM dd yyyy, p')}</p>
       </Footer>
     </StyledBookingDataBox>
   )

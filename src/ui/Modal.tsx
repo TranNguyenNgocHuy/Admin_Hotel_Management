@@ -118,22 +118,3 @@ Modal.Open = Open
 Modal.Window = Window
 
 export default Modal
-
-// interface Props {
-//   children: React.ReactElement
-//   handleCloseModal: () => void
-// }
-
-// function Modal({ children, handleCloseModal }: Props) {
-//   return createPortal(
-//     <Overlay>
-//       <StyledModal>
-//         <Button onClick={handleCloseModal}>
-//           <HiXMark></HiXMark>
-//         </Button>
-//         <div>{children}</div>
-//       </StyledModal>
-//     </Overlay>,
-//     document.body
-//   )
-// }

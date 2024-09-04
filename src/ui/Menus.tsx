@@ -41,7 +41,7 @@ const StyledList = styled.ul<StyledListProp>`
   border-radius: var(--border-radius-md);
 
   right: ${(props) => props.position.x}px;
-  top: ${(props) => props.position.y}px;
+  top: ${(props) => props.position.y + 1}px;
 `
 
 const StyledButton = styled.button`
@@ -67,6 +67,10 @@ const StyledButton = styled.button`
     color: var(--color-grey-400);
     transition: all 0.3s;
   }
+
+  & span {
+    white-space: nowrap;
+  }
 `
 type Position = {
   x: number
@@ -86,18 +90,19 @@ interface CommonProps {
 }
 
 interface ListProps {
-  cabinId: number
+  id: number
   children: React.ReactNode
 }
 
 interface ToggleProps {
-  cabinId: number
+  id: number
 }
 
 interface ButtonProps {
   icon: React.ReactNode
   children: React.ReactNode
   onClick?: () => void
+  disabled?: boolean
 }
 
 function Menus({ children }: CommonProps) {
@@ -116,7 +121,7 @@ function Menu({ children }: CommonProps) {
   return <StyledMenu>{children}</StyledMenu>
 }
 
-function Toggle({ cabinId }: ToggleProps) {
+function Toggle({ id }: ToggleProps) {
   const context = useContext(MenusContext)
   if (!context) throw new Error('Toggle must be used within a Menus')
 
@@ -133,7 +138,7 @@ function Toggle({ cabinId }: ToggleProps) {
       })
     }
 
-    openId === null || openId !== cabinId ? open(cabinId) : close()
+    openId === null || openId !== id ? open(id) : close()
   }
 
   return (
@@ -143,14 +148,14 @@ function Toggle({ cabinId }: ToggleProps) {
   )
 }
 
-function List({ cabinId, children }: ListProps) {
+function List({ id, children }: ListProps) {
   const context = useContext(MenusContext)
   if (!context) throw new Error('List must be used within a Menus')
 
   const { openId, position, close } = context
   const ref = useOutsideClick<HTMLUListElement>(close)
 
-  if (openId !== cabinId || position === null) return null
+  if (openId !== id || position === null) return null
 
   return (
     <StyledList position={position} ref={ref}>
@@ -159,7 +164,7 @@ function List({ cabinId, children }: ListProps) {
   )
 }
 
-function Button({ children, icon, onClick }: ButtonProps) {
+function Button({ children, icon, onClick, disabled }: ButtonProps) {
   const context = useContext(MenusContext)
   if (!context) throw new Error('Button must be used within a Menus')
   const { close } = context
@@ -170,7 +175,7 @@ function Button({ children, icon, onClick }: ButtonProps) {
   }
   return (
     <li>
-      <StyledButton onClick={handleClick}>
+      <StyledButton onClick={handleClick} disabled={disabled}>
         {icon}
         <span>{children}</span>
       </StyledButton>

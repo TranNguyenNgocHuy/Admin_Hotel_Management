@@ -7,6 +7,11 @@ import Table from '../../ui/Table'
 import { formatCurrency } from '../../utils/helpers'
 import { formatDistanceFromNow } from '../../utils/helpers'
 import { BookingData } from './interfaceBooking'
+import Modal from '../../ui/Modal'
+import Menus from '../../ui/Menus'
+import { HiArrowDownOnSquare, HiArrowUpOnSquare, HiEye } from 'react-icons/hi2'
+import { useNavigate } from 'react-router-dom'
+import useCheckout from '../check-in-out/useCheckout'
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -41,7 +46,7 @@ interface BookingRowProps {
 
 function BookingRow({ booking }: BookingRowProps) {
   const {
-    // id: bookingId,
+    id: bookingId,
     // createAt,
     startDate,
     endDate,
@@ -58,6 +63,9 @@ function BookingRow({ booking }: BookingRowProps) {
     'checked-in': 'green',
     'checked-out': 'silver'
   }
+
+  const { isCheckOut, checkout } = useCheckout()
+  const navigate = useNavigate()
 
   return (
     <Table.Row>
@@ -80,6 +88,36 @@ function BookingRow({ booking }: BookingRowProps) {
       <Tag type={statusToTagName[status]}>{status.replace('-', ' ')}</Tag>
 
       <Amount>{formatCurrency(totalPrice)}</Amount>
+
+      <div>
+        <Modal>
+          <Menus.Menu>
+            <Menus.Toggle id={booking.id} />
+
+            <Menus.List id={booking.id}>
+              <Menus.Button icon={<HiEye />} onClick={() => navigate(`/bookings/${booking.id}`)}>
+                See detail
+              </Menus.Button>
+
+              {status === 'unconfirmed' && (
+                <Menus.Button icon={<HiArrowDownOnSquare />} onClick={() => navigate(`/checkin/${booking.id}`)}>
+                  Check in
+                </Menus.Button>
+              )}
+
+              {status === 'checked-in' && (
+                <Menus.Button
+                  icon={<HiArrowUpOnSquare />}
+                  onClick={() => checkout({ bookingId })}
+                  disabled={isCheckOut}
+                >
+                  Check out
+                </Menus.Button>
+              )}
+            </Menus.List>
+          </Menus.Menu>
+        </Modal>
+      </div>
     </Table.Row>
   )
 }
