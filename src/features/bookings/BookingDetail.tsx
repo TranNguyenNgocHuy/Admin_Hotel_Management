@@ -12,6 +12,9 @@ import { useMoveBack } from '../../hooks/useMoveBack'
 import { useGetBooking } from './useGetBooking'
 import Spinner from '../../ui/Spinner'
 import useCheckout from '../check-in-out/useCheckout'
+import Modal from '../../ui/Modal'
+import ConfirmDelete from '../../ui/ConfirmDelete'
+import { useDeleteBooking } from './useDeleteBooking'
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -22,6 +25,7 @@ const HeadingGroup = styled.div`
 function BookingDetail() {
   const { isLoading, booking } = useGetBooking()
   const { isCheckOut, checkout } = useCheckout()
+  const { isDeleting, deleteBooking } = useDeleteBooking()
 
   const moveBack = useMoveBack()
   const navigate = useNavigate()
@@ -50,19 +54,34 @@ function BookingDetail() {
 
       <BookingDataBox booking={booking} />
 
-      <ButtonGroup>
-        {status === 'unconfirmed' && <Button onClick={() => navigate(`/checkin/${booking.id}`)}>Check in</Button>}
+      <Modal>
+        <ButtonGroup>
+          {status === 'unconfirmed' && <Button onClick={() => navigate(`/checkin/${booking.id}`)}>Check in</Button>}
 
-        {status === 'checked-in' && (
-          <Button onClick={() => checkout({ bookingId })} disabled={isCheckOut}>
-            Check out
+          {status === 'checked-in' && (
+            <Button onClick={() => checkout({ bookingId })} disabled={isCheckOut}>
+              Check out
+            </Button>
+          )}
+
+          <Modal.Open opens='deleteBookingDetail'>
+            <Button variation='danger'>Delete Booking</Button>
+          </Modal.Open>
+
+          <Button variation='secondary' onClick={moveBack}>
+            Back
           </Button>
-        )}
+        </ButtonGroup>
 
-        <Button variation='secondary' onClick={moveBack}>
-          Back
-        </Button>
-      </ButtonGroup>
+        <Modal.Window name='deleteBookingDetail'>
+          <ConfirmDelete
+            resourceName={`Booking #${bookingId}`}
+            disabled={isDeleting}
+            handleConfirm={() => deleteBooking(bookingId, { onSettled: () => navigate(-1) })}
+            handleCloseModal={() => close()}
+          />
+        </Modal.Window>
+      </Modal>
     </>
   )
 }

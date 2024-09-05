@@ -68,19 +68,20 @@ function CheckinBooking() {
 
       <BookingDataBox booking={booking} />
 
-      <Box>
-        <Checkbox
-          checked={addBreakfast}
-          onChange={() => {
-            setAddBreakfast((add) => !add)
-            setConfirmPaid(false)
-          }}
-          id='breakfast'
-        >
-          Want to add breakfast for {formatCurrency(optionalBreakfastPrice)} ?
-        </Checkbox>
-      </Box>
-
+      {!hasBreakfast && (
+        <Box>
+          <Checkbox
+            checked={addBreakfast}
+            onChange={() => {
+              setAddBreakfast((add) => !add)
+              setConfirmPaid(false)
+            }}
+            id='breakfast'
+          >
+            Want to add breakfast for {formatCurrency(optionalBreakfastPrice)} ?
+          </Checkbox>
+        </Box>
+      )}
       {!hasBreakfast && (
         <Box>
           <Checkbox
@@ -98,7 +99,7 @@ function CheckinBooking() {
       )}
 
       <ButtonGroup>
-        <Button onClick={handleCheckin} disabled={!confirmPaid || isCheckin}>
+        <Button onClick={handleCheckin} disabled={isCheckin}>
           Check in booking #{bookingId}
         </Button>
         <Button variation='secondary' onClick={moveBack}>
