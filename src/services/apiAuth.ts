@@ -1,10 +1,28 @@
+import { SignupFormValues } from '../features/authentication/interfaceAuth'
 import supabase from './supabase'
 
-interface LoginProps {
+export async function signup({ fullName, email, password }: SignupFormValues) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        fullName,
+        avartar: ''
+      }
+    }
+  })
+
+  if (error) throw new Error(error?.message)
+
+  return data
+}
+
+export interface LoginParams {
   email: string
   password: string
 }
-export async function login({ email, password }: LoginProps) {
+export async function login({ email, password }: LoginParams) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
