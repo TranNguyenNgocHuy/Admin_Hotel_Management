@@ -57,7 +57,6 @@ export async function createCabin(newCabin: NewCabinData) {
 
 export async function editCabin(newCabin: NewCabinData) {
   if (!newCabin.id) return
-  console.log(newCabin)
 
   const dataToUpdate = { ...newCabin }
 
