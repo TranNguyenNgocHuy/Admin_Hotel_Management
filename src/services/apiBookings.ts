@@ -2,6 +2,7 @@ import { getToday } from '../utils/helpers'
 import supabase from './supabase'
 import { BookingData, BookingFullData } from '../features/bookings/interfaceBooking'
 import { PAGE_SIZE } from '../utils/constants'
+import { StatBookingData, StatStaysData } from '../features/dashboard/interfaceStats'
 
 interface GetBookingsParams {
   filter: {
@@ -57,27 +58,26 @@ export async function getBooking(id: number) {
   return data as BookingFullData
 }
 
-// Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-export async function getBookingsAfterDate(date) {
+export async function getBookingsAfterDate(date: string) {
+  // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
   const { data, error } = await supabase
     .from('bookings')
-    .select('created_at, totalPrice, extrasPrice')
-    .gte('created_at', date)
-    .lte('created_at', getToday({ end: true }))
+    .select('createdAt, totalPrice, extrasPrice')
+    .gte('createdAt', date)
+    .lte('createdAt', getToday({ end: true }))
 
   if (error) {
     console.error(error)
     throw new Error('Bookings could not get loaded')
   }
 
-  return data
+  return data as StatBookingData[]
 }
 
-// Returns all STAYS that are were created after the given date
-export async function getStaysAfterDate(date) {
+export async function getStaysAfterDate(date: string) {
+  // Returns all STAY DATES of customer that are were created after the given date
   const { data, error } = await supabase
     .from('bookings')
-    // .select('*')
     .select('*, guests(fullName)')
     .gte('startDate', date)
     .lte('startDate', getToday())
@@ -87,7 +87,7 @@ export async function getStaysAfterDate(date) {
     throw new Error('Bookings could not get loaded')
   }
 
-  return data
+  return data as StatStaysData[]
 }
 
 // Activity means that there is a check in or a check out today
