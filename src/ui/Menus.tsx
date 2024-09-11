@@ -128,6 +128,8 @@ function Toggle({ id }: ToggleProps) {
   const { openId, close, open, setPosition } = context
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation()
+
     const button = e.currentTarget.closest('button')
 
     if (button) {
@@ -153,7 +155,7 @@ function List({ id, children }: ListProps) {
   if (!context) throw new Error('List must be used within a Menus')
 
   const { openId, position, close } = context
-  const ref = useOutsideClick<HTMLUListElement>(close)
+  const ref = useOutsideClick<HTMLUListElement>(close, false)
 
   if (openId !== id || position === null) return null
 

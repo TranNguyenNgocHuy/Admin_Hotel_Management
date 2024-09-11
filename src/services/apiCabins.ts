@@ -73,7 +73,6 @@ export async function editCabin(newCabin: NewCabinData) {
   }
 
   delete dataToUpdate.id
-  console.log(dataToUpdate)
   const { data, error } = await supabase.from('cabins').update(dataToUpdate).eq('id', newCabin.id).select()
 
   if (error) {
