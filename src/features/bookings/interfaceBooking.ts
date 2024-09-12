@@ -35,7 +35,7 @@ export interface BookingData {
 
 export interface BookingFullData {
   id: number
-  createAt: string
+  createdAt: string
   startDate: string
   endDate: string
   numNights: number

@@ -109,7 +109,7 @@ interface BookingDataBoxProps {
 // A purely presentational component
 function BookingDataBox({ booking }: BookingDataBoxProps) {
   const {
-    createAt,
+    createdAt,
     startDate,
     endDate,
     numNights,
@@ -175,7 +175,8 @@ function BookingDataBox({ booking }: BookingDataBoxProps) {
       </Section>
 
       <Footer>
-        <p>Booked {format(new Date(createAt), 'EEE, MMM dd yyyy, p')}</p>
+        <p>Booked {format(new Date(createdAt), 'EEE, MMM dd yyyy, p')}</p>
+        test
       </Footer>
     </StyledBookingDataBox>
   )

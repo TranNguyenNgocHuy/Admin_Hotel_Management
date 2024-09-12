@@ -5,6 +5,7 @@ import { BookingFullData } from './interfaceBooking'
 
 export function useGetBooking() {
   const { bookingId } = useParams()
+  console.log(bookingId)
 
   const {
     isLoading,
